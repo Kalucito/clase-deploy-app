@@ -346,7 +346,7 @@
 
 ## T-24 · Columnas y tablero estático (`Board`, `BoardColumn`)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** las 4 columnas fijas con contador y scroll interno (RN-01, CA-01.1, CA-01.6, CL-19).
 - **Descripción:** `BoardColumn` (título, contador, lista de `TaskCard`, placeholder "columna vacía", scroll vertical interno con `scroll-area`) y `Board` (renderiza las 4 columnas en orden a partir de una lista de tareas por props). Sin DnD todavía; preparar la estructura para sumarlo en la etapa 8.
 - **Archivos involucrados:** `frontend/src/components/board/BoardColumn.tsx`, `Board.tsx`, tests.
