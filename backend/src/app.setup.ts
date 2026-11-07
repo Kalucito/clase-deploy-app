@@ -1,5 +1,10 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import {
+  flattenValidationErrors,
+  ValidationFailedException,
+} from './common/errors';
 
 /** Configuración compartida entre main.ts y los tests e2e. */
 export function configureApp(app: INestApplication): void {
@@ -22,8 +27,11 @@ export function configureApp(app: INestApplication): void {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (errors) =>
+        new ValidationFailedException(flattenValidationErrors(errors)),
     }),
   );
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   app.enableShutdownHooks();
 }

@@ -143,7 +143,7 @@
 
 ## T-08 · Filtro global de excepciones y formato de error unificado
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** todas las respuestas de error con el formato del plan §5.4 (CA-11.4: sin detalles técnicos).
 - **Descripción:** implementar `AllExceptionsFilter` (`@Catch()`) que devuelva `{ statusCode, error, message, details? }` y mapee: validación → 400 con `details[{field,message}]` en español (`exceptionFactory` del `ValidationPipe`); UUID inválido → 400; `NotFoundException`/Prisma `P2025` → 404 "La tarea no existe"; `P2002` → 409; `P1001`/`P1002` y errores de conexión → 503; resto → 500 con mensaje genérico. Loguear los 5xx con stack mediante `Logger`. Registrarlo en `configureApp`.
 - **Archivos involucrados:** `backend/src/common/filters/all-exceptions.filter.ts`, `backend/src/app.setup.ts`, tests `*.spec.ts` del filtro.
