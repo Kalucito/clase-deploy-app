@@ -35,12 +35,12 @@ export function Board({
   return (
     <div
       data-testid="board"
-      className="flex h-full gap-4 overflow-x-auto lg:overflow-visible"
+      className="flex h-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1 lg:snap-none lg:overflow-visible"
     >
       {COLUMNS.map(({ status, title }) => (
         <div
           key={status}
-          className="h-full min-w-[80%] sm:min-w-[45%] lg:min-w-0 lg:flex-1"
+          className="h-full min-w-[85%] snap-start sm:min-w-[45%] lg:min-w-0 lg:flex-1"
         >
           <BoardColumn
             status={status}

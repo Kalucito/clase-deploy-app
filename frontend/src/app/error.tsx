@@ -2,7 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 
-export default function ErrorPage({ retry }: { error: unknown; retry: () => void }) {
+export default function ErrorPage({
+  retry,
+}: {
+  error: unknown;
+  retry: () => void;
+}) {
   return (
     <main
       role="alert"

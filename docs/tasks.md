@@ -366,7 +366,7 @@
 
 ## T-26 · Diseño minimalista y responsive
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RF-11 (CA-11.1, CA-11.2, CA-11.5).
 - **Descripción:** cabecera simple con nombre "TaskFlow" y espacio reservado para el botón "Nueva tarea" y la barra de filtros; tablero en grilla de 4 columnas en escritorio y scroll horizontal con *snap* por columna en pantallas angostas; tema claro con tokens de shadcn/ui; contraste suficiente; foco visible en todos los controles.
 - **Archivos involucrados:** `frontend/src/app/globals.css`, `src/app/page.tsx` (provisional con datos de ejemplo), `components/board/Board.tsx`, `BoardColumn.tsx`.

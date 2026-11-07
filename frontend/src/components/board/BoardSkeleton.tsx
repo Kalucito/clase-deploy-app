@@ -8,12 +8,12 @@ export function BoardSkeleton() {
       role="status"
       aria-busy="true"
       aria-label="Cargando tablero"
-      className="flex h-full gap-4 overflow-x-auto lg:overflow-visible"
+      className="flex h-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1 lg:snap-none lg:overflow-visible"
     >
       {COLUMNS.map(({ status, title }) => (
         <div
           key={status}
-          className="flex h-full min-w-[80%] flex-col gap-2 rounded-xl bg-muted/50 p-2 sm:min-w-[45%] lg:min-w-0 lg:flex-1"
+          className="flex h-full min-w-[85%] snap-start flex-col gap-2 rounded-xl bg-muted/50 p-2 sm:min-w-[45%] lg:min-w-0 lg:flex-1"
         >
           <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
             {title}
