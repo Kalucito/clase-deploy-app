@@ -326,7 +326,7 @@
 
 ## T-22 · Lógica pura del tablero y de fechas
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** funciones puras y probadas que usan la UI.
 - **Descripción:** `lib/board.ts`: agrupar tareas por estado ordenadas por `position`; `applyMove(tasks, id, status, position)` que replica la lógica del backend (acota posición, reasigna posiciones contiguas, no toca otras columnas). `lib/dates.ts`: `todayLocal()` (`YYYY-MM-DD` según la fecha local del navegador) e `isOverdue(task, today)` (D4: `dueDate < hoy` y `status ≠ hecho`; comparación de cadenas `YYYY-MM-DD` sin crear `Date` con zona UTC).
 - **Archivos involucrados:** `frontend/src/lib/board.ts`, `frontend/src/lib/dates.ts`, tests.
