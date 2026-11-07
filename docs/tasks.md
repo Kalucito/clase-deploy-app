@@ -503,7 +503,7 @@
 
 ## T-36 · Lógica pura de filtros (`lib/filters.ts`)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RN-11, RN-12, RN-13, D2, D3 como funciones puras y probadas.
 - **Descripción:** `normalizeText` (minúsculas + sin acentos vía `normalize('NFD')`), `applyFilters(tasks, filters)` con `Filters = { search, priorities[], labels[], statuses[] }`: búsqueda por subcadena en título y descripción (solo espacios = vacía, CL-20); prioridad y estado con OR interno; etiquetas OR sin distinguir mayúsculas; AND entre tipos. Helpers: `hasActiveFilters`, `visibleStatuses` (D2: sin selección = las 4), `pruneLabels(filters, availableLabels)` (CA-08.8), y conteo "visibles de total" por columna.
 - **Archivos involucrados:** `frontend/src/lib/filters.ts`, tests.
