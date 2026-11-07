@@ -4,6 +4,7 @@ import { TaskNotFoundException } from '../common/errors';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { MoveTaskDto } from './dto/move-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { normalizeLabels } from './labels.util';
 import { serializeTask, TaskResponse } from './task.serializer';
@@ -143,6 +144,67 @@ export class TasksService {
       return tx.task.update({
         where: { id },
         data,
+        include: { labels: true },
+      });
+    });
+    return serializeTask(row);
+  }
+
+  /**
+   * Mueve/reordena de forma atómica (RN-06). `dto.position` es el índice final
+   * en la columna destino; se acota al rango válido sin error (CL-14).
+   */
+  async move(id: string, dto: MoveTaskDto): Promise<TaskResponse> {
+    const row = await this.withBoardLock(async (tx) => {
+      const current = await tx.task.findUnique({
+        where: { id },
+        select: { status: true, position: true },
+      });
+      if (!current) throw new TaskNotFoundException();
+
+      const { status: from, position: a } = current;
+      const to = dto.status;
+      const size = await tx.task.count({ where: { status: to } });
+
+      if (to === from) {
+        const b = Math.min(dto.position, size - 1);
+        if (b === a) {
+          // Misma posición y estado: sin cambios (ni siquiera updatedAt).
+          return tx.task.findUniqueOrThrow({
+            where: { id },
+            include: { labels: true },
+          });
+        }
+        if (b > a) {
+          await tx.task.updateMany({
+            where: { status: to, position: { gt: a, lte: b } },
+            data: { position: { decrement: 1 } },
+          });
+        } else {
+          await tx.task.updateMany({
+            where: { status: to, position: { gte: b, lt: a } },
+            data: { position: { increment: 1 } },
+          });
+        }
+        return tx.task.update({
+          where: { id },
+          data: { position: b, updatedAt: new Date() },
+          include: { labels: true },
+        });
+      }
+
+      const b = Math.min(dto.position, size);
+      await tx.task.updateMany({
+        where: { status: from, position: { gt: a } },
+        data: { position: { decrement: 1 } },
+      });
+      await tx.task.updateMany({
+        where: { status: to, position: { gte: b } },
+        data: { position: { increment: 1 } },
+      });
+      return tx.task.update({
+        where: { id },
+        data: { status: to, position: b, updatedAt: new Date() },
         include: { labels: true },
       });
     });

@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import request from 'supertest';
 import {
   columnTitles,
@@ -531,6 +532,234 @@ describe('Tasks (e2e)', () => {
 
     it('id inválido → 400', async () => {
       await patch('abc', { title: 'x' }).expect(400);
+    });
+  });
+
+  describe('PATCH /api/tasks/:id/move', () => {
+    const move = (id: string, body: unknown) =>
+      request(ctx.http)
+        .patch(`/api/tasks/${id}/move`)
+        .send(body as object);
+    const past = new Date('2026-01-01T00:00:00.000Z');
+
+    // Dentro de la misma columna: todas las combinaciones origen → destino.
+    const pairs: [number, number][] = [];
+    for (let a = 0; a < 5; a++) for (let b = 0; b < 5; b++) pairs.push([a, b]);
+
+    it.each(pairs)('misma columna: posición %i → %i', async (a, b) => {
+      const col = await seedColumn(ctx.prisma, 'en_progreso', 5, 't');
+      const expected = col.map((t) => t.title);
+      const [moved] = expected.splice(a, 1);
+      expected.splice(b, 0, moved);
+
+      const res = await move(col[a].id, {
+        status: 'en_progreso',
+        position: b,
+      }).expect(200);
+      expect(res.body).toMatchObject({
+        id: col[a].id,
+        status: 'en_progreso',
+        position: b,
+      });
+      expect(await columnTitles(ctx.prisma, 'en_progreso')).toEqual(expected);
+      await expectPositionsContiguous(ctx.prisma);
+    });
+
+    // Entre columnas: origen de 5, destino de 3 (destino 0..3 = inicio, medio, final).
+    const cross: [number, number][] = [];
+    for (let a = 0; a < 5; a++) for (let b = 0; b <= 3; b++) cross.push([a, b]);
+
+    it.each(cross)('entre columnas: origen %i → destino %i', async (a, b) => {
+      const src = await seedColumn(ctx.prisma, 'pendiente', 5, 's');
+      await seedColumn(ctx.prisma, 'en_revision', 3, 'd');
+      const srcExpected = src.map((t) => t.title);
+      const [moved] = srcExpected.splice(a, 1);
+      const dstExpected = ['d0', 'd1', 'd2'];
+      dstExpected.splice(b, 0, moved);
+
+      const res = await move(src[a].id, {
+        status: 'en_revision',
+        position: b,
+      }).expect(200);
+      expect(res.body).toMatchObject({ status: 'en_revision', position: b });
+      expect(await columnTitles(ctx.prisma, 'pendiente')).toEqual(srcExpected);
+      expect(await columnTitles(ctx.prisma, 'en_revision')).toEqual(
+        dstExpected,
+      );
+      await expectPositionsContiguous(ctx.prisma);
+    });
+
+    it('a una columna vacía', async () => {
+      const col = await seedColumn(ctx.prisma, 'pendiente', 2, 's');
+      const res = await move(col[0].id, {
+        status: 'hecho',
+        position: 0,
+      }).expect(200);
+      expect(res.body).toMatchObject({ status: 'hecho', position: 0 });
+      expect(await columnTitles(ctx.prisma, 'pendiente')).toEqual(['s1']);
+      await expectPositionsContiguous(ctx.prisma);
+    });
+
+    it('posición fuera de rango se acota al final (CL-14)', async () => {
+      const col = await seedColumn(ctx.prisma, 'pendiente', 3, 's');
+      await seedColumn(ctx.prisma, 'hecho', 2, 'h');
+      let res = await move(col[0].id, {
+        status: 'pendiente',
+        position: 999,
+      }).expect(200);
+      expect(res.body.position).toBe(2);
+      expect(await columnTitles(ctx.prisma, 'pendiente')).toEqual([
+        's1',
+        's2',
+        's0',
+      ]);
+      res = await move(col[1].id, { status: 'hecho', position: 999 }).expect(
+        200,
+      );
+      expect(res.body).toMatchObject({ status: 'hecho', position: 2 });
+      expect(await columnTitles(ctx.prisma, 'hecho')).toEqual([
+        'h0',
+        'h1',
+        's1',
+      ]);
+      await expectPositionsContiguous(ctx.prisma);
+    });
+
+    it('misma posición y estado: 200 sin tocar updatedAt', async () => {
+      const t = await seedTask(ctx.prisma, {
+        title: 'a',
+        position: 0,
+        updatedAt: past,
+      });
+      const res = await move(t.id, { status: 'pendiente', position: 0 }).expect(
+        200,
+      );
+      expect(res.body.updatedAt).toBe(past.toISOString());
+      const same = await move(t.id, {
+        status: 'pendiente',
+        position: 50,
+      }).expect(200);
+      expect(same.body.updatedAt).toBe(past.toISOString());
+    });
+
+    it('updatedAt cambia solo en la tarea movida', async () => {
+      const a = await seedTask(ctx.prisma, {
+        title: 'a',
+        position: 0,
+        updatedAt: past,
+      });
+      const b = await seedTask(ctx.prisma, {
+        title: 'b',
+        position: 1,
+        updatedAt: past,
+      });
+      const c = await seedTask(ctx.prisma, {
+        title: 'c',
+        status: 'hecho',
+        position: 0,
+        updatedAt: past,
+      });
+      const res = await move(a.id, { status: 'hecho', position: 0 }).expect(
+        200,
+      );
+      expect(new Date(res.body.updatedAt).getTime()).toBeGreaterThan(
+        past.getTime(),
+      );
+      for (const id of [b.id, c.id]) {
+        const row = await ctx.prisma.task.findUniqueOrThrow({ where: { id } });
+        expect(row.updatedAt.toISOString()).toBe(past.toISOString());
+      }
+    });
+
+    it('conserva el resto de los campos de la tarea', async () => {
+      const t = await seedTask(ctx.prisma, {
+        title: 'a',
+        position: 0,
+        labels: ['x'],
+        description: 'd',
+        dueDate: '2026-12-01',
+      });
+      const res = await move(t.id, { status: 'hecho', position: 0 }).expect(
+        200,
+      );
+      expect(res.body).toMatchObject({
+        title: 'a',
+        labels: ['x'],
+        description: 'd',
+        dueDate: '2026-12-01',
+      });
+    });
+
+    it.each([
+      ['posición negativa', { status: 'hecho', position: -1 }],
+      ['posición decimal', { status: 'hecho', position: 1.5 }],
+      ['estado inválido', { status: 'otro', position: 0 }],
+      ['sin estado', { position: 0 }],
+      ['sin posición', { status: 'hecho' }],
+      ['campo desconocido', { status: 'hecho', position: 0, title: 'x' }],
+    ])('%s → 400', async (_n, body) => {
+      const t = await seedTask(ctx.prisma, { title: 'a', position: 0 });
+      await move(t.id, body).expect(400);
+      const row = await ctx.prisma.task.findUniqueOrThrow({
+        where: { id: t.id },
+      });
+      expect(row.status).toBe('pendiente');
+    });
+
+    it('tarea inexistente → 404 (CL-12)', async () => {
+      const res = await move('7b1e0a2e-5d1c-4a0e-9c3e-1d2f3a4b5c6d', {
+        status: 'hecho',
+        position: 0,
+      }).expect(404);
+      expect(res.body.message).toBe('La tarea no existe');
+    });
+
+    it('id inválido → 400', async () => {
+      await move('abc', { status: 'hecho', position: 0 }).expect(400);
+    });
+
+    it('atomicidad: un fallo a mitad de la transacción no deja estado parcial (RN-06)', async () => {
+      const src = await seedColumn(ctx.prisma, 'pendiente', 3, 's');
+      await seedColumn(ctx.prisma, 'hecho', 2, 'h');
+      jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+      const original = ctx.prisma.$transaction.bind(ctx.prisma) as (
+        fn: (tx: Record<string, unknown>) => Promise<unknown>,
+      ) => Promise<unknown>;
+      // Fuerza un error en el último paso (update de la tarea), después de los desplazamientos.
+      jest.spyOn(ctx.prisma, '$transaction').mockImplementation(((
+        fn: (tx: Record<string, unknown>) => Promise<unknown>,
+      ) =>
+        original((tx) =>
+          fn(
+            new Proxy(tx, {
+              get(target, key) {
+                if (key !== 'task') return Reflect.get(target, key) as unknown;
+                const task = target.task as Record<string, unknown>;
+                return new Proxy(task, {
+                  get(t, k) {
+                    if (k === 'update') {
+                      return () => Promise.reject(new Error('fallo simulado'));
+                    }
+                    const v = Reflect.get(t, k) as unknown;
+                    return typeof v === 'function' ? v.bind(t) : v;
+                  },
+                });
+              },
+            }),
+          ),
+        )) as never);
+
+      const res = await move(src[0].id, { status: 'hecho', position: 1 });
+      jest.restoreAllMocks();
+      expect(res.status).toBe(500);
+      expect(JSON.stringify(res.body)).not.toContain('fallo simulado');
+      expect(await columnTitles(ctx.prisma, 'pendiente')).toEqual([
+        's0',
+        's1',
+        's2',
+      ]);
+      expect(await columnTitles(ctx.prisma, 'hecho')).toEqual(['h0', 'h1']);
+      await expectPositionsContiguous(ctx.prisma);
     });
   });
 });

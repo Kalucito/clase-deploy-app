@@ -245,7 +245,7 @@
 
 ## T-16 · Movimiento: `PATCH /api/tasks/:id/move`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** mover y reordenar de forma atómica (RN-06, RF-06, RF-07).
 - **Descripción:** transacción con lock aplicando plan §4.4 y §6.3: misma columna `a → b` (con `b` acotado a `0..n-1`; si `b > a`, `position - 1` en `(a, b]`; si `b < a`, `position + 1` en `[b, a)`); otra columna (`b` acotado a `0..n`; origen `position - 1` donde `> a`; destino `position + 1` donde `>= b`). Mover a la misma posición y estado devuelve 200 sin tocar `updatedAt`. `updatedAt` cambia solo en la tarea movida. Posición fuera de rango se acota sin error (CL-14).
 - **Archivos involucrados:** `backend/src/tasks/tasks.service.ts`, `tasks.controller.ts`, `backend/test/tasks.e2e-spec.ts`.
