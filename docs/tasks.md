@@ -69,7 +69,7 @@
 
 ## T-03 · Esqueleto del proyecto `backend/` (NestJS + TypeScript)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** proyecto NestJS que compila, lintea y corre tests, con scripts previstos.
 - **Descripción:** generar el proyecto NestJS en `backend/` (npm, TypeScript `strict`). Instalar dependencias adicionales del plan: `@nestjs/config`, `class-validator`, `class-transformer`; dev: Jest y `supertest` (defaults de Nest). Definir los scripts de plan §8: `start:dev`, `build`, `start:prod`, `test`, `test:e2e`, `lint` (los de Prisma se agregan en T-04/T-05). Eliminar el controlador/servicio de ejemplo. Confirmar que `package-lock.json` queda versionado.
 - **Archivos involucrados:** `backend/package.json`, `backend/package-lock.json`, `backend/tsconfig*.json`, `backend/nest-cli.json`, `backend/src/main.ts`, `backend/src/app.module.ts`, config de ESLint/Jest.
