@@ -380,7 +380,7 @@
 
 ## T-27 · Carga del tablero con TanStack Query
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** mostrar los datos reales y persistentes (RF-01, RF-10; CA-01.7, CA-10.2).
 - **Descripción:** hooks `useTasks` (`['tasks']`, `listTasks`) y `useLabels` (`['labels']`). `BoardPage` (componente cliente) usa `useTasks` y alimenta `Board` con `isLoading`/`isError`/`refetch`. Los datos no se piden en SSR (plan T11).
 - **Archivos involucrados:** `frontend/src/hooks/useTasks.ts`, `useLabels.ts`, `src/components/board/BoardPage.tsx`, `src/app/page.tsx`.

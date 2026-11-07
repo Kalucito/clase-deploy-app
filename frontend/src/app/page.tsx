@@ -1,5 +1,5 @@
-import { SamplePage } from "@/components/board/SamplePage";
+import { BoardPage } from "@/components/board/BoardPage";
 
 export default function Home() {
-  return <SamplePage />;
+  return <BoardPage />;
 }
