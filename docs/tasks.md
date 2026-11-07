@@ -460,7 +460,7 @@
 
 ## T-33 · Modal de creación (`TaskDialog`, `TaskForm`) y `POST`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RF-02 completo (CA-02.1 a CA-02.6, RN-04, CL-18).
 - **Descripción:** botón visible "Nueva tarea" (y el de `EmptyBoard`) que abre `TaskDialog` con `TaskForm` (`react-hook-form` + zod): título, descripción (contador `n/1000`), estado (por defecto Pendiente), prioridad (por defecto Media), vencimiento, etiquetas (`TagInput`); el título muestra contador `n/100`. Mutación `useCreateTask` **no optimista**: botón deshabilitado mientras guarda (CL-18); éxito → cierra el modal, invalida `['tasks']` y `['labels']` (la tarea aparece al principio de la columna); error 400 → mapear `details[].field` a errores del formulario; otro error → el modal sigue abierto con los datos y el mensaje (CA-02.5). Cierre con Esc/cancelar/clic fuera; si hay cambios sin guardar, pedir confirmación de descarte (CA-11.3, CL-22). El modal es utilizable en móvil.
 - **Archivos involucrados:** `frontend/src/components/tasks/TaskDialog.tsx`, `TaskForm.tsx`, `frontend/src/hooks/useTaskMutations.ts`, `BoardPage.tsx`, `EmptyBoard.tsx`, tests.

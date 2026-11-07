@@ -30,7 +30,9 @@ function renderPage() {
   return render(<BoardPage />, { wrapper: Wrapper });
 }
 
-beforeEach(() => listTasksMock.mockReset());
+beforeEach(() => {
+  listTasksMock.mockReset();
+});
 
 describe("BoardPage", () => {
   it("muestra el esqueleto mientras carga y luego las tareas", async () => {
