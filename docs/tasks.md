@@ -433,7 +433,7 @@
 
 ## T-31 · Reordenamiento dentro de la columna y rollback visual
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RF-07 y RN-07 comprobados en la UI.
 - **Descripción:** completar el caso de reordenar dentro de la misma columna (índice final correcto hacia arriba y abajo), y verificar el rollback visual real simulando un fallo (backend apagado o respuesta 500) durante un arrastre.
 - **Archivos involucrados:** `frontend/src/hooks/useBoardDnd.ts`, `frontend/src/lib/board.ts` (ajustes si hace falta), tests.
