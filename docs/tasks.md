@@ -185,7 +185,7 @@
 
 ## T-11 · DTOs de entrada
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** única fuente de validación de entrada (plan §5.3, RN-09).
 - **Descripción:** `CreateTaskDto`, `UpdateTaskDto` (parche parcial escrito explícitamente; `description` y `dueDate` aceptan `null`; `title` no) y `MoveTaskDto` (`status` enum, `position` entero ≥ 0). Reglas: título trim, no vacío, ≤ 100; descripción ≤ 1000 (cadena vacía → `null`); `status`/`priority` por enum; `dueDate` con formato `YYYY-MM-DD` y fecha de calendario válida (rechazar `2026-02-31`); `labels` array ≤ 10, cada ítem string con trim y longitud 1–20. Mensajes en español.
 - **Archivos involucrados:** `backend/src/tasks/dto/create-task.dto.ts`, `update-task.dto.ts`, `move-task.dto.ts`, tests.
