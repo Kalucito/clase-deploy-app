@@ -99,7 +99,7 @@
 
 ## T-05 · Esquema Prisma y migración inicial con `CHECK`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** modelo de datos del plan §4 aplicado en PostgreSQL, con las restricciones de integridad de la spec §8.
 - **Descripción:** definir en `schema.prisma` los enums `TaskStatus` y `Priority`, y los modelos `Task` (`id` uuid, `title` VarChar(100), `description` VarChar(1000)?, `status`, `priority`, `dueDate` Date?, `position`, `createdAt`, `updatedAt` **sin** `@updatedAt`, `labels`, `@@index([status, position])`, `@@map("tasks")`) y `Label` (`name`, `normalizedName` único VarChar(20), `@@map("labels")`), relación M–N implícita. Generar con `prisma migrate dev --create-only` y **editar el SQL** para agregar `CHECK (char_length(btrim(title)) >= 1)` y `CHECK (position >= 0)`. Aplicar la migración.
 - **Archivos involucrados:** `backend/prisma/schema.prisma`, `backend/prisma/migrations/<ts>_init/migration.sql`, `backend/prisma/migrations/migration_lock.toml`.

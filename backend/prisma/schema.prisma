@@ -7,3 +7,42 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum TaskStatus {
+  pendiente
+  en_progreso
+  en_revision
+  hecho
+}
+
+enum Priority {
+  baja
+  media
+  alta
+}
+
+model Task {
+  id          String     @id @default(uuid()) @db.Uuid
+  title       String     @db.VarChar(100)
+  description String?    @db.VarChar(1000)
+  status      TaskStatus @default(pendiente)
+  priority    Priority   @default(media)
+  dueDate     DateTime?  @db.Date
+  position    Int
+  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
+  // Sin @updatedAt: se gestiona a mano para no pisarlo al desplazar vecinas (plan 4.3)
+  updatedAt   DateTime   @default(now()) @db.Timestamptz(3)
+  labels      Label[]
+
+  @@index([status, position])
+  @@map("tasks")
+}
+
+model Label {
+  id             String @id @default(uuid()) @db.Uuid
+  name           String @db.VarChar(20)
+  normalizedName String @unique @db.VarChar(20)
+  tasks          Task[]
+
+  @@map("labels")
+}
