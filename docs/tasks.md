@@ -172,7 +172,7 @@
 
 ## T-10 · Utilidades de dominio: normalización de etiquetas y serializer
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** lógica pura y reutilizable antes de los endpoints.
 - **Descripción:** (a) función de normalización de etiquetas: `trim`, descartar vacías, deduplicar sin distinguir mayúsculas conservando la primera forma recibida, y calcular `normalizedName` (trim + minúsculas) (CL-05, RN-10). (b) `task.serializer.ts`: fila Prisma con etiquetas → `Task` público (`labels: string[]`, `dueDate: "YYYY-MM-DD"` o `null`, `description: null` si vacía, fechas ISO).
 - **Archivos involucrados:** `backend/src/tasks/labels.util.ts` (o dentro de `tasks/`), `backend/src/tasks/task.serializer.ts`, sus `*.spec.ts`.
