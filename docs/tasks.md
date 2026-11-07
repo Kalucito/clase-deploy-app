@@ -287,7 +287,7 @@
 
 ## T-19 · Esqueleto del proyecto `frontend/` (Next.js, Tailwind, shadcn/ui)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** proyecto Next.js (App Router, TypeScript `strict`) que compila y con la base de estilos lista.
 - **Descripción:** crear `frontend/` con npm. Instalar y configurar Tailwind y shadcn/ui (`components.json`); agregar los componentes del plan §7.2: `button`, `dialog`, `alert-dialog`, `input`, `textarea`, `select`, `badge`, `dropdown-menu`, `form`, `label`, `popover`, `skeleton`, `sonner`, `tooltip`, `scroll-area`. Instalar `@tanstack/react-query`, `zod`, `react-hook-form`, `@hookform/resolvers`, `sonner`, `lucide-react`, `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`; dev: Vitest, Testing Library, `jsdom`. Scripts: `dev`, `build`, `start`, `test`, `lint`, `typecheck`. Fallar el build si falta `NEXT_PUBLIC_API_URL` (validación en `next.config`, plan §11). Crear `frontend/.env.local` (ignorado) a partir del `.env.example`.
 - **Archivos involucrados:** `frontend/package.json`, `package-lock.json`, `next.config.*`, `tailwind`/CSS globales, `components.json`, `src/components/ui/*`, `src/lib/utils.ts`, `vitest.config.ts`.
