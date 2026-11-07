@@ -11,7 +11,7 @@ Se usan en orden, uno por vez. Cada uno lee lo que dejó el anterior en `docs/`.
 | 3 | `03-tasks.md` | Divide el trabajo en tareas verificables | `docs/tasks.md` |
 | 4 | `04-implement.md` | Implementa tarea por tarea, con commits | `frontend/`, `backend/` |
 | 5 | `05-verify.md` | Audita contra la spec y corre los tests | informe + `docs/tasks.md` |
-| 6 | `06-deploy.md` | Publica en Railway: vos armás los servicios en el panel y el agente configura, deploya y lee los logs | `docs/deploy.md` |
+| 6 | `06-deploy.md` | El agente publica en Railway: crea los servicios, configura, deploya y lee los logs | `docs/deploy.md` |
 | 7 | `07-deploy-fallido.md` | Diagnostica un deploy que falló, leyendo los logs de Railway | el arreglo |
 
 ## Reglas

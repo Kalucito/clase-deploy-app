@@ -1,6 +1,6 @@
 Actuá como ingeniero de DevOps senior.
 
-Vamos a publicar TaskFlow en Railway. Trabajamos en equipo: yo configuro la infraestructura desde el panel de Railway y vos trabajás desde la terminal con la CLI de Railway.
+Vamos a publicar TaskFlow en Railway. Vos hacés todo el despliegue desde la terminal con la CLI de Railway. Yo superviso y apruebo cada paso.
 
 Leé:
 
@@ -20,28 +20,28 @@ Los tres se despliegan desde el repositorio https://github.com/Kalucito/clase-de
 
 No cambies el stack ni la arquitectura para simplificar el despliegue.
 
-## 2. Quién hace qué
+## 2. Qué hacés vos
 
-Yo, desde el panel de Railway:
-
-- Creo el proyecto.
-- Agrego el servicio postgres.
-- Creo los servicios backend y frontend desde el repositorio, con Root Directory /backend y /frontend.
-- Genero los dominios públicos de backend y frontend.
-- Te dejo un token del proyecto en la variable de entorno RAILWAY_TOKEN.
-
-Vos, desde la terminal:
+Todo, desde la terminal:
 
 - Auditás y preparás el código.
+- Creás el proyecto de Railway, llamado taskflow.
+- Agregás el servicio postgres.
+- Creás los servicios backend y frontend desde el repositorio, rama main, con Root Directory /backend y /frontend.
+- Generás los dominios públicos de backend y frontend.
 - Configurás las variables, los comandos y las migraciones de cada servicio.
 - Desplegás haciendo push a main.
 - Leés los logs, diagnosticás y corregís hasta que los dos servicios estén funcionando.
 
+Lo estamos mostrando en clase: antes de cada paso, contá qué vas a hacer y por qué.
+
 ## 3. Límites
 
-- Antes de tu primer comando de Railway, ejecutá railway status y confirmá que el proyecto y los servicios son los esperados. Si no coinciden, detenete y avisame.
-- Operá únicamente sobre los servicios postgres, backend y frontend de este proyecto.
-- No crees ni borres proyectos, servicios, entornos ni bases de datos.
+- Antes de tu primer comando de Railway, ejecutá railway whoami y confirmá la cuenta conmigo.
+- Creá un único proyecto nuevo para TaskFlow. Desde ese momento, operá solo sobre ese proyecto y sus servicios postgres, backend y frontend.
+- Antes de cada cambio, verificá con railway status que estás vinculado al proyecto correcto.
+- No listes, vincules, modifiques ni borres ningún otro proyecto de la cuenta.
+- No borres proyectos, servicios, entornos ni bases de datos. Si algo quedó mal creado, avisame.
 - No uses railway up: el deploy sale siempre del repositorio, con push a main.
 - No muestres en pantalla el valor de ningún secreto. Estamos proyectando.
 - Antes de cada cambio en Railway, decime qué vas a cambiar y por qué.
@@ -72,9 +72,18 @@ Cuando te confirme, corregí únicamente lo que encontraste en la auditoría.
 - Ejecutá los tests y los builds después de los cambios.
 - Hacé commit, pero no hagas push todavía.
 
-## 6. Configuración en Railway
+## 6. Infraestructura y configuración en Railway
 
-Cuando te avise que los servicios están creados, verificalos con railway status.
+Creá la infraestructura definida en la sección 1:
+
+- El proyecto taskflow.
+- El servicio postgres.
+- Los servicios backend y frontend desde el repositorio, rama main, con Root Directory /backend y /frontend.
+- Los dominios públicos de backend y frontend.
+
+Verificá con railway status que todo quedó como se definió.
+
+Si backend o frontend intentan desplegarse antes de tener sus variables y fallan, es esperable. No lo corrijas hasta terminar la configuración.
 
 Prepará una tabla con cada variable, el servicio que la usa y de dónde sale su valor. Mostrámela antes de cargar nada.
 
