@@ -1,7 +1,11 @@
-import type { ReactNode } from "react";
+import { useDroppable } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { cn } from "@/lib/utils";
 import type { Task, TaskStatus } from "@/types/task";
-import { TaskCard } from "./TaskCard";
+import { SortableTaskCard } from "./SortableTaskCard";
 
 interface BoardColumnProps {
   status: TaskStatus;
@@ -12,8 +16,10 @@ interface BoardColumnProps {
   totalCount?: number;
   onOpenTask?: (task: Task) => void;
   today?: string;
-  /** Reemplaza la lista por defecto (lo usa el DnD en la etapa 8). */
-  children?: ReactNode;
+  /** Las tarjetas no se pueden arrastrar (filtros activos, D1). */
+  dndDisabled?: boolean;
+  /** Hay un arrastre en curso y la tarjeta está sobre esta columna (CA-06.2). */
+  isDropTarget?: boolean;
   className?: string;
 }
 
@@ -24,9 +30,11 @@ export function BoardColumn({
   totalCount,
   onOpenTask,
   today,
-  children,
+  dndDisabled = false,
+  isDropTarget = false,
   className,
 }: BoardColumnProps) {
+  const { setNodeRef } = useDroppable({ id: status, disabled: dndDisabled });
   const headingId = `column-${status}-title`;
   const counter =
     totalCount !== undefined && totalCount !== tasks.length
@@ -36,10 +44,13 @@ export function BoardColumn({
 
   return (
     <section
+      ref={setNodeRef}
       aria-labelledby={headingId}
       data-status={status}
+      data-drop-target={isDropTarget || undefined}
       className={cn(
-        "flex h-full min-h-0 flex-col rounded-xl bg-muted/50 p-2",
+        "flex h-full min-h-0 flex-col rounded-xl bg-muted/50 p-2 transition-colors",
+        isDropTarget && "bg-primary/10 ring-2 ring-primary/40",
         className,
       )}
     >
@@ -58,15 +69,24 @@ export function BoardColumn({
 
       {/* Scroll vertical interno: la columna no ensancha ni alarga la página (CL-19). */}
       <div className="min-h-0 flex-1 overflow-y-auto px-1 pb-1">
-        {children ?? (
-          <ul className="flex flex-col gap-2">
+        <SortableContext
+          items={tasks.map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+          disabled={dndDisabled}
+        >
+          <ul className="flex min-h-12 flex-col gap-2">
             {tasks.map((task) => (
               <li key={task.id}>
-                <TaskCard task={task} onOpen={onOpenTask} today={today} />
+                <SortableTaskCard
+                  task={task}
+                  disabled={dndDisabled}
+                  onOpen={onOpenTask}
+                  today={today}
+                />
               </li>
             ))}
           </ul>
-        )}
+        </SortableContext>
         {isEmpty && (
           <p className="rounded-lg border border-dashed px-3 py-6 text-center text-sm text-muted-foreground">
             Sin tareas

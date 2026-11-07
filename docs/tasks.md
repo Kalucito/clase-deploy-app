@@ -418,7 +418,7 @@
 
 ## T-30 · Arrastre entre columnas con dnd-kit (`useBoardDnd`, `DragOverlay`)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RF-06 (CA-06.1, CA-06.2, CA-06.6, CA-06.8).
 - **Descripción:** `Board` envuelto en `DndContext` con sensores `PointerSensor` (distancia 5 px), `TouchSensor` (retraso 200 ms con tolerancia) y `KeyboardSensor`. Cada columna: `useDroppable` + `SortableContext`; cada `TaskCard`: `useSortable`. `DragOverlayCard` para la tarjeta flotante; la original atenuada; la columna destino resaltada con `isOver`. `useBoardDnd`: estado local de arrastre (`onDragStart` instantánea, `onDragOver` mueve solo en estado local, `onDragEnd` calcula `{status, position}` y dispara `useMoveTask`, `onDragCancel` descarta). Soltar fuera de columnas o en el mismo lugar no llama al backend.
 - **Archivos involucrados:** `frontend/src/hooks/useBoardDnd.ts`, `components/board/Board.tsx`, `BoardColumn.tsx`, `TaskCard.tsx`, `DragOverlayCard.tsx`, tests.
