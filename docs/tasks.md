@@ -408,7 +408,7 @@
 
 ## T-29 · Mutación optimista de movimiento con rollback
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RN-07, CA-06.3/06.4, CA-07.3 — sin UI de arrastre todavía.
 - **Descripción:** hook `useMoveTask` (TanStack Query): `scope: { id: 'board-moves' }` para serializar; `onMutate` (`cancelQueries`, guardar caché previa, aplicar `applyMove` a `['tasks']`); `onError` (restaurar caché y toast en español, RN-07); `onSettled` (`invalidateQueries(['tasks'])`). Sin reintentos. Un `404` del servidor muestra "La tarea ya no existe" y refresca (CL-12).
 - **Archivos involucrados:** `frontend/src/hooks/useMoveTask.ts` (o `useTaskMutations.ts`), tests.
