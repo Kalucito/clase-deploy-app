@@ -56,7 +56,7 @@
 
 ## T-02 · Docker Compose para PostgreSQL de desarrollo
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** base PostgreSQL local reproducible (plan §2, §8).
 - **Descripción:** crear `docker-compose.yml` con un único servicio `postgres` (usuario/clave/base de desarrollo `taskflow`, volumen nombrado, puerto 5432, healthcheck `pg_isready`). Solo desarrollo; no se usa en producción. Agregar también una base para tests (por ejemplo `taskflow_test`, creada con un script de init o documentada en el `.env.example` del backend como `DATABASE_URL` alternativa).
 - **Archivos involucrados:** `docker-compose.yml`, (opcional) `docker/init-test-db.sql`, `backend/.env.example` (comentario con la URL de test).
