@@ -475,7 +475,7 @@
 
 ## T-34 · Consulta y edición de tarea (`PATCH`)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RF-03 y RF-04 (CA-03.x, CA-04.x, RN-05).
 - **Descripción:** al hacer clic en una tarjeta, abrir `TaskDialog` en modo edición con todos los datos y las fechas de creación y última modificación. Mutación `useUpdateTask` no optimista; envía solo lo necesario (`null` para vaciar descripción/vencimiento). Si cambia el estado, la tarea queda al final de la columna destino (lo resuelve el backend). `404` al abrir o guardar → toast "La tarea ya no existe", cierra el modal y refresca el tablero (CA-03.2, CA-04.5, CL-12). Mismas validaciones y mismo comportamiento de descarte que en creación.
 - **Archivos involucrados:** `frontend/src/components/tasks/TaskDialog.tsx`, `TaskForm.tsx`, `frontend/src/hooks/useTaskMutations.ts`, `BoardPage.tsx`, tests.

@@ -35,6 +35,7 @@ export function BoardPage() {
         onRetry={() => void refetch()}
         onMoveTask={moveTask}
         onCreateFirst={() => setDialog({ mode: "create" })}
+        onOpenTask={(task) => setDialog({ mode: "edit", task })}
       />
       <TaskDialog state={dialog} onClose={() => setDialog(null)} />
     </AppShell>
