@@ -18,7 +18,11 @@ export const metadata: Metadata = {
   description: "Tablero Kanban para gestionar tareas.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="es"

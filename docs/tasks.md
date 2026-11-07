@@ -562,7 +562,7 @@
 
 ## T-41 · Verificación final y correcciones
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada (ver `docs/verificacion-final.md`)
 - **Objetivo:** cerrar el desarrollo con la spec cumplida y los proyectos listos para desplegar.
 - **Descripción:**
   1. Recorrer **todos** los CA-xx y CL-xx de la spec en una checklist manual (o automática) y registrar resultado; corregir defectos (cada corrección con su test de regresión).
