@@ -270,7 +270,7 @@
 
 ## T-18 · Pruebas de integridad, concurrencia y errores de la API
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** cerrar la etapa garantizando RN-03, RN-06 y CL-13 de punta a punta.
 - **Descripción:** completar la suite e2e con: invariante global de posiciones tras secuencias aleatorias de crear/mover/editar/borrar; concurrencia con `Promise.all` (varios `move` y `create` en paralelo sobre las mismas columnas); formato de error unificado en todos los códigos; base caída → 503; CORS. Revisar que ningún test dependa del orden de ejecución.
 - **Archivos involucrados:** `backend/test/*.e2e-spec.ts`, `backend/test/helpers/*` (helpers de siembra e invariante).
