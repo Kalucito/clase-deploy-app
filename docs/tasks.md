@@ -86,7 +86,7 @@
 
 ## T-04 · Instalar Prisma y verificar su versión vigente
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** Prisma configurado contra el PostgreSQL local, según los requisitos de la versión vigente (plan §4.5, §11).
 - **Descripción:** instalar `prisma` (dev) y `@prisma/client`; inicializar `backend/prisma/`. Antes de escribir el esquema, verificar la documentación de la versión instalada (¿requiere `prisma.config.ts`?, ¿adaptadores de driver?, ¿ubicación de `url`?) y adaptar la configuración sin cambiar el diseño. Agregar scripts `prisma:migrate:dev`, `prisma:migrate:deploy`; `prisma generate` en `postinstall` o dentro de `build`. Crear `backend/.env` local (ignorado) copiando el `.env.example`.
 - **Archivos involucrados:** `backend/package.json`, `backend/prisma/schema.prisma` (mínimo), `backend/prisma.config.ts` (si la versión lo exige), `backend/.env` (no versionado).
