@@ -84,4 +84,20 @@ export class TasksService {
     });
     return serializeTask(row);
   }
+
+  /** RN-03: borra y compacta las posiciones de la columna. */
+  async remove(id: string): Promise<void> {
+    await this.withBoardLock(async (tx) => {
+      const task = await tx.task.findUnique({
+        where: { id },
+        select: { status: true, position: true },
+      });
+      if (!task) throw new TaskNotFoundException();
+      await tx.task.delete({ where: { id } });
+      await tx.task.updateMany({
+        where: { status: task.status, position: { gt: task.position } },
+        data: { position: { decrement: 1 } },
+      });
+    });
+  }
 }

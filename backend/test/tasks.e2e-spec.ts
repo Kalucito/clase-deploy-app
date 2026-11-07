@@ -297,4 +297,63 @@ describe('Tasks (e2e)', () => {
       });
     });
   });
+
+  describe('DELETE /api/tasks/:id', () => {
+    const del = (id: string) => request(ctx.http).delete(`/api/tasks/${id}`);
+
+    it.each([
+      ['la primera', 0, ['p1', 'p2', 'p3']],
+      ['una del medio', 1, ['p0', 'p2', 'p3']],
+      ['la última', 3, ['p0', 'p1', 'p2']],
+    ])('borrar %s compacta las posiciones', async (_n, idx, expected) => {
+      const col = await seedColumn(ctx.prisma, 'pendiente', 4, 'p');
+      await seedColumn(ctx.prisma, 'hecho', 2, 'h');
+      const res = await del(col[idx].id).expect(204);
+      expect(res.text).toBe('');
+      expect(await columnTitles(ctx.prisma, 'pendiente')).toEqual(expected);
+      expect(await columnTitles(ctx.prisma, 'hecho')).toEqual(['h0', 'h1']);
+      await expectPositionsContiguous(ctx.prisma);
+    });
+
+    it('borrar de nuevo → 404', async () => {
+      const [t] = await seedColumn(ctx.prisma, 'pendiente', 1);
+      await del(t.id).expect(204);
+      const res = await del(t.id).expect(404);
+      expect(res.body.message).toBe('La tarea no existe');
+    });
+
+    it('id inválido → 400', async () => {
+      await del('abc').expect(400);
+    });
+
+    it('no cambia updatedAt de las vecinas', async () => {
+      const past = new Date('2026-01-01T00:00:00.000Z');
+      const a = await seedTask(ctx.prisma, {
+        title: 'a',
+        position: 0,
+        updatedAt: past,
+      });
+      const b = await seedTask(ctx.prisma, {
+        title: 'b',
+        position: 1,
+        updatedAt: past,
+      });
+      await del(a.id).expect(204);
+      const after = await ctx.prisma.task.findUniqueOrThrow({
+        where: { id: b.id },
+      });
+      expect(after.position).toBe(0);
+      expect(after.updatedAt.toISOString()).toBe(past.toISOString());
+    });
+
+    it('conserva las etiquetas huérfanas en la base', async () => {
+      const t = await seedTask(ctx.prisma, {
+        title: 'a',
+        position: 0,
+        labels: ['solo'],
+      });
+      await del(t.id).expect(204);
+      expect(await ctx.prisma.label.count()).toBe(1);
+    });
+  });
 });

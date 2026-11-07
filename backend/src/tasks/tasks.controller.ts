@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { uuidPipe } from '../common/errors';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TaskResponse } from './task.serializer';
@@ -21,5 +29,11 @@ export class TasksController {
   @Post()
   create(@Body() dto: CreateTaskDto): Promise<TaskResponse> {
     return this.tasks.create(dto);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  remove(@Param('id', uuidPipe()) id: string): Promise<void> {
+    return this.tasks.remove(id);
   }
 }

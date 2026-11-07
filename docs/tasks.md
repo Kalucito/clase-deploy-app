@@ -221,7 +221,7 @@
 
 ## T-14 · Eliminación: `DELETE /api/tasks/:id`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** borrar y compactar posiciones (RN-03, RF-05).
 - **Descripción:** transacción con lock: leer la tarea, borrar, `updateMany(status = S, position > p, position - 1)`. `204` en éxito; `404` si no existe. Las etiquetas huérfanas no se borran (plan T5).
 - **Archivos involucrados:** `backend/src/tasks/tasks.service.ts`, `tasks.controller.ts`, `backend/test/tasks.e2e-spec.ts`.
