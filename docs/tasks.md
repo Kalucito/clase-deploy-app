@@ -489,7 +489,7 @@
 
 ## T-35 · Eliminación con confirmación (`DELETE`)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RF-05 (CA-05.1 a CA-05.5, RN-08, CL-18).
 - **Descripción:** acción "Eliminar" desde el modal de edición (y/o menú de la tarjeta) que abre `DeleteTaskDialog` (`AlertDialog`) mostrando el título de la tarea. Mutación `useDeleteTask`: botón deshabilitado en curso; éxito → cierra, invalida `['tasks']`/`['labels']`; `404` se trata como éxito idempotente y refresca (CA-05.5); otro error → la tarea permanece y se muestra el mensaje (CA-05.4). Cancelar no cambia nada.
 - **Archivos involucrados:** `frontend/src/components/tasks/DeleteTaskDialog.tsx`, `TaskDialog.tsx`, `frontend/src/hooks/useTaskMutations.ts`, tests.

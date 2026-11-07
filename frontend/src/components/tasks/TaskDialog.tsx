@@ -40,6 +40,7 @@ import {
   type TaskFormValues,
 } from "@/lib/validation";
 import type { Task } from "@/types/task";
+import { DeleteTaskDialog } from "./DeleteTaskDialog";
 import { TaskForm } from "./TaskForm";
 
 export type TaskDialogState = { mode: "create" } | { mode: "edit"; task: Task };
@@ -83,6 +84,7 @@ function TaskDialogInner({
   const update = useUpdateTask();
   const [serverError, setServerError] = useState<string | null>(null);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const submitting = useRef(false);
   const saving = create.isPending || update.isPending;
   // Se lee en el render para que react-hook-form suscriba el cambio de `isDirty`.
@@ -214,6 +216,17 @@ function TaskDialogInner({
           )}
 
           <DialogFooter>
+            {editing && (
+              <Button
+                type="button"
+                variant="destructive"
+                className="sm:mr-auto"
+                onClick={() => setConfirmDelete(true)}
+                disabled={saving}
+              >
+                Eliminar
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
@@ -228,6 +241,18 @@ function TaskDialogInner({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {editing && (
+        <DeleteTaskDialog
+          task={editing}
+          open={confirmDelete}
+          onOpenChange={setConfirmDelete}
+          onDeleted={() => {
+            setConfirmDelete(false);
+            onClose();
+          }}
+        />
+      )}
 
       <AlertDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}>
         <AlertDialogContent>
