@@ -156,7 +156,7 @@
 
 ## T-09 · Módulo de salud `GET /api/health`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** healthcheck para Railway (plan T14).
 - **Descripción:** `HealthModule` + `HealthController`: `GET /api/health` ejecuta `SELECT 1` vía Prisma; responde `200 {"status":"ok"}` o `503` si la base no responde.
 - **Archivos involucrados:** `backend/src/health/health.module.ts`, `backend/src/health/health.controller.ts`, `backend/src/app.module.ts`.
