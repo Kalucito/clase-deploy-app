@@ -356,4 +356,181 @@ describe('Tasks (e2e)', () => {
       expect(await ctx.prisma.label.count()).toBe(1);
     });
   });
+
+  describe('PATCH /api/tasks/:id', () => {
+    const patch = (id: string, body: unknown) =>
+      request(ctx.http)
+        .patch(`/api/tasks/${id}`)
+        .send(body as object);
+    const past = new Date('2026-01-01T00:00:00.000Z');
+
+    async function seedFull() {
+      return seedTask(ctx.prisma, {
+        title: 'orig',
+        description: 'desc',
+        position: 0,
+        dueDate: '2026-12-01',
+        labels: ['a', 'b'],
+        updatedAt: past,
+      });
+    }
+
+    it.each([
+      ['title', { title: '  Nuevo  ' }, { title: 'Nuevo' }],
+      ['description', { description: 'otra' }, { description: 'otra' }],
+      ['priority', { priority: 'alta' }, { priority: 'alta' }],
+      ['dueDate', { dueDate: '2027-01-15' }, { dueDate: '2027-01-15' }],
+    ])('edita %s sin mover la tarea', async (_f, body, expected) => {
+      const t = await seedFull();
+      await seedTask(ctx.prisma, { title: 'x1', position: 1 });
+      const res = await patch(t.id, body).expect(200);
+      expect(res.body).toMatchObject({
+        ...expected,
+        position: 0,
+        status: 'pendiente',
+      });
+      expect(res.body.createdAt).toBe(t.createdAt.toISOString());
+      expect(new Date(res.body.updatedAt).getTime()).toBeGreaterThan(
+        past.getTime(),
+      );
+      await expectPositionsContiguous(ctx.prisma);
+    });
+
+    it('un parche vacío no cambia nada', async () => {
+      const t = await seedFull();
+      const res = await patch(t.id, {}).expect(200);
+      expect(res.body).toMatchObject({
+        title: 'orig',
+        description: 'desc',
+        dueDate: '2026-12-01',
+        labels: ['a', 'b'],
+      });
+    });
+
+    it('null vacía description y dueDate (CA-04.4)', async () => {
+      const t = await seedFull();
+      const res = await patch(t.id, {
+        dueDate: null,
+        description: null,
+      }).expect(200);
+      expect(res.body).toMatchObject({ dueDate: null, description: null });
+      const res2 = await patch(t.id, { description: '' }).expect(200);
+      expect(res2.body.description).toBeNull();
+    });
+
+    it('reemplaza el conjunto de etiquetas (deduplicado)', async () => {
+      const t = await seedFull();
+      const res = await patch(t.id, { labels: ['c', 'C', 'a'] }).expect(200);
+      expect(res.body.labels).toEqual(['a', 'c']);
+      const res2 = await patch(t.id, { labels: [] }).expect(200);
+      expect(res2.body.labels).toEqual([]);
+    });
+
+    it.each([
+      ['la primera', 0, ['p1', 'p2', 'p3']],
+      ['una del medio', 1, ['p0', 'p2', 'p3']],
+      ['la última', 3, ['p0', 'p1', 'p2']],
+    ])(
+      'cambiar estado de %s la deja al final del destino y compacta el origen',
+      async (_n, idx, origin) => {
+        const col = await seedColumn(ctx.prisma, 'pendiente', 4, 'p');
+        await seedColumn(ctx.prisma, 'en_revision', 2, 'r');
+        const res = await patch(col[idx].id, { status: 'en_revision' }).expect(
+          200,
+        );
+        expect(res.body).toMatchObject({ status: 'en_revision', position: 2 });
+        expect(await columnTitles(ctx.prisma, 'pendiente')).toEqual(origin);
+        expect(await columnTitles(ctx.prisma, 'en_revision')).toEqual([
+          'r0',
+          'r1',
+          `p${idx}`,
+        ]);
+        await expectPositionsContiguous(ctx.prisma);
+      },
+    );
+
+    it('cambiar estado hacia una columna vacía → posición 0', async () => {
+      const [t] = await seedColumn(ctx.prisma, 'pendiente', 1);
+      const res = await patch(t.id, { status: 'hecho' }).expect(200);
+      expect(res.body).toMatchObject({ status: 'hecho', position: 0 });
+    });
+
+    it('enviar el mismo estado no cambia la posición', async () => {
+      const col = await seedColumn(ctx.prisma, 'pendiente', 3, 'p');
+      const res = await patch(col[1].id, {
+        status: 'pendiente',
+        title: 'z',
+      }).expect(200);
+      expect(res.body.position).toBe(1);
+      expect(await columnTitles(ctx.prisma, 'pendiente')).toEqual([
+        'p0',
+        'z',
+        'p2',
+      ]);
+    });
+
+    it('no cambia updatedAt de las vecinas', async () => {
+      const a = await seedTask(ctx.prisma, {
+        title: 'a',
+        position: 0,
+        updatedAt: past,
+      });
+      const b = await seedTask(ctx.prisma, {
+        title: 'b',
+        position: 1,
+        updatedAt: past,
+      });
+      const c = await seedTask(ctx.prisma, {
+        title: 'c',
+        status: 'hecho',
+        position: 0,
+        updatedAt: past,
+      });
+      await patch(a.id, { status: 'hecho' }).expect(200);
+      for (const id of [b.id, c.id]) {
+        const row = await ctx.prisma.task.findUniqueOrThrow({ where: { id } });
+        expect(row.updatedAt.toISOString()).toBe(past.toISOString());
+      }
+    });
+
+    it('title: null → 400', async () => {
+      const t = await seedFull();
+      const res = await patch(t.id, { title: null }).expect(400);
+      expect(res.body.details.map((d: { field: string }) => d.field)).toContain(
+        'title',
+      );
+    });
+
+    it.each([
+      ['título de 101', { title: 'a'.repeat(101) }],
+      ['título en blanco', { title: '  ' }],
+      ['descripción de 1001', { description: 'a'.repeat(1001) }],
+      ['estado inválido', { status: 'otro' }],
+      ['prioridad inválida', { priority: 'x' }],
+      ['fecha inválida', { dueDate: '2026-02-31' }],
+      [
+        '11 etiquetas',
+        { labels: Array.from({ length: 11 }, (_, i) => `t${i}`) },
+      ],
+      ['campo desconocido', { position: 1 }],
+    ])('%s → 400', async (_n, body) => {
+      const t = await seedFull();
+      await patch(t.id, body).expect(400);
+      const row = await ctx.prisma.task.findUniqueOrThrow({
+        where: { id: t.id },
+      });
+      expect(row.title).toBe('orig');
+    });
+
+    it('tarea inexistente → 404 (CL-12)', async () => {
+      const res = await patch('7b1e0a2e-5d1c-4a0e-9c3e-1d2f3a4b5c6d', {
+        title: 'x',
+      }).expect(404);
+      expect(res.body.message).toBe('La tarea no existe');
+    });
+
+    it('id inválido → 400', async () => {
+      await patch('abc', { title: 'x' }).expect(400);
+    });
+  });
 });

@@ -5,10 +5,12 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { uuidPipe } from '../common/errors';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 import { TaskResponse } from './task.serializer';
 import { TasksService } from './tasks.service';
 
@@ -35,5 +37,13 @@ export class TasksController {
   @HttpCode(204)
   remove(@Param('id', uuidPipe()) id: string): Promise<void> {
     return this.tasks.remove(id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', uuidPipe()) id: string,
+    @Body() dto: UpdateTaskDto,
+  ): Promise<TaskResponse> {
+    return this.tasks.update(id, dto);
   }
 }

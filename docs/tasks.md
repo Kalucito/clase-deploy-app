@@ -231,7 +231,7 @@
 
 ## T-15 · Edición: `PATCH /api/tasks/:id`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** edición parcial, con cambio de estado al final de la columna destino (RF-04, RN-05).
 - **Descripción:** transacción con lock. Actualiza solo los campos enviados; `null` vacía `description`/`dueDate`; `labels` reemplaza el conjunto completo (re-normalizado); `updatedAt = now` solo en esta tarea. Si cambia `status`: compactar origen (`position > a` → `-1`) y dejar la tarea en la posición `n` de la columna destino (final). Si `status` no cambia, la posición no varía. 404 si no existe.
 - **Archivos involucrados:** `backend/src/tasks/tasks.service.ts`, `tasks.controller.ts`, `backend/test/tasks.e2e-spec.ts`.

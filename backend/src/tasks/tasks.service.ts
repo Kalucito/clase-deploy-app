@@ -4,6 +4,7 @@ import { TaskNotFoundException } from '../common/errors';
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 import { normalizeLabels } from './labels.util';
 import { serializeTask, TaskResponse } from './task.serializer';
 
@@ -99,5 +100,52 @@ export class TasksService {
         data: { position: { decrement: 1 } },
       });
     });
+  }
+
+  /**
+   * Edición parcial. Si cambia `status`, la tarea va al final de la columna
+   * destino y se compacta el origen (RN-05). `updatedAt` cambia solo en esta tarea.
+   */
+  async update(id: string, dto: UpdateTaskDto): Promise<TaskResponse> {
+    const row = await this.withBoardLock(async (tx) => {
+      const current = await tx.task.findUnique({
+        where: { id },
+        select: { status: true, position: true },
+      });
+      if (!current) throw new TaskNotFoundException();
+
+      const data: Prisma.TaskUpdateInput = { updatedAt: new Date() };
+      if (dto.title !== undefined) data.title = dto.title;
+      if (dto.description !== undefined) {
+        data.description = dto.description ? dto.description : null;
+      }
+      if (dto.priority !== undefined) data.priority = dto.priority;
+      if (dto.dueDate !== undefined) {
+        data.dueDate = dto.dueDate === null ? null : toDate(dto.dueDate);
+      }
+      if (dto.labels !== undefined) {
+        // Reemplaza el conjunto completo de etiquetas.
+        data.labels = {
+          set: [],
+          connectOrCreate: labelsConnectOrCreate(dto.labels),
+        };
+      }
+
+      if (dto.status !== undefined && dto.status !== current.status) {
+        await tx.task.updateMany({
+          where: { status: current.status, position: { gt: current.position } },
+          data: { position: { decrement: 1 } },
+        });
+        data.status = dto.status;
+        data.position = await tx.task.count({ where: { status: dto.status } });
+      }
+
+      return tx.task.update({
+        where: { id },
+        data,
+        include: { labels: true },
+      });
+    });
+    return serializeTask(row);
   }
 }
