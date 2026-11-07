@@ -54,7 +54,8 @@ function setup() {
   );
   return { onDeleted, onOpenChange, user: userEvent.setup() };
 }
-const confirmBtn = () => screen.getByRole("button", { name: /^Elimina(r|ndo)/ });
+const confirmBtn = () =>
+  screen.getByRole("button", { name: /^Elimina(r|ndo)/ });
 
 describe("DeleteTaskDialog", () => {
   it("la confirmación nombra la tarea (CA-05.1)", () => {

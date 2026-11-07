@@ -513,7 +513,7 @@
 
 ## T-37 · Barra de filtros (`FilterBar`, `useFilters`) con debounce
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** RF-08 en la UI (CA-08.1 a CA-08.4, CA-08.6, RN-16).
 - **Descripción:** `useFilters` (estado local en `BoardPage`, no persistido: recargar limpia). `FilterBar` con `SearchInput` (debounce ~250 ms), `MultiSelectFilter` para prioridad, etiqueta (opciones de `useLabels`) y estado, y botón "Limpiar filtros" visible/habilitado solo si hay filtros activos. Controles con etiquetas accesibles y operables por teclado.
 - **Archivos involucrados:** `frontend/src/hooks/useFilters.ts`, `frontend/src/components/filters/FilterBar.tsx`, `SearchInput.tsx`, `MultiSelectFilter.tsx`, `BoardPage.tsx`, tests.
