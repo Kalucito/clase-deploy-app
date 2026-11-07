@@ -542,7 +542,7 @@
 
 ## T-39 · Completar la cobertura de pruebas del frontend
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** cubrir lo que falte respecto de la trazabilidad del plan §10.
 - **Descripción:** revisar la matriz Spec → pruebas y agregar los tests faltantes: tablero (carga/error/vacío), `TaskForm`, `FilterBar`, `useMoveTask` (éxito, rollback, serialización), `useBoardDnd`, `isOverdue`, `applyMove`, `filters`. Sin agregar funcionalidad.
 - **Archivos involucrados:** `frontend/src/**/*.test.ts(x)`.

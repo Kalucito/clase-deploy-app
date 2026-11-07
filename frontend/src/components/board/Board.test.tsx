@@ -164,3 +164,47 @@ describe("Board — estados (CA-01.3, 01.4, 01.5)", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });
+
+describe("BoardColumn — feedback de arrastre y filtros (CA-06.2, D1)", () => {
+  it("resalta la columna destino con data-drop-target (CA-06.2)", () => {
+    const { rerender } = render(
+      <BoardColumn status="hecho" title="Hecho" tasks={[]} isDropTarget />,
+    );
+    expect(screen.getByRole("region", { name: "Hecho" })).toHaveAttribute(
+      "data-drop-target",
+      "true",
+    );
+    rerender(<BoardColumn status="hecho" title="Hecho" tasks={[]} />);
+    expect(screen.getByRole("region", { name: "Hecho" })).not.toHaveAttribute(
+      "data-drop-target",
+    );
+  });
+
+  it("con el arrastre deshabilitado las tarjetas quedan aria-disabled (CA-06.7)", () => {
+    render(
+      <BoardColumn
+        status="pendiente"
+        title="Pendiente"
+        tasks={[make(1, "pendiente", 0)]}
+        dndDisabled
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Tarea: Tarea 1" }),
+    ).toHaveAttribute("aria-disabled", "true");
+  });
+});
+
+describe("Board — columnas ocultas por el filtro de estado (D2)", () => {
+  it("solo renderiza las columnas visibles", () => {
+    render(
+      <Board
+        tasks={[make(1, "hecho", 0), make(2, "pendiente", 0)]}
+        visibleStatuses={["hecho"]}
+        totalCount={2}
+      />,
+    );
+    expect(screen.getAllByRole("region")).toHaveLength(1);
+    expect(screen.getByRole("region", { name: "Hecho" })).toBeInTheDocument();
+  });
+});
