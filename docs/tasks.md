@@ -113,7 +113,7 @@
 
 ## T-06 · `PrismaModule`, `PrismaService` y validación de entorno
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** acceso a la base desde NestJS y arranque que falla rápido si falta configuración.
 - **Descripción:** crear `PrismaModule` (`@Global`) y `PrismaService extends PrismaClient` (conecta en `onModuleInit`, desconecta en `onModuleDestroy`). Crear `config/env.validation.ts` (class-validator): `DATABASE_URL` requerido, `PORT` numérico (default 3001), `NODE_ENV`, `CORS_ORIGIN` requerido si `NODE_ENV=production` (lista separada por comas). Registrar `ConfigModule.forRoot({ isGlobal: true, validate })` en `AppModule`.
 - **Archivos involucrados:** `backend/src/prisma/prisma.module.ts`, `backend/src/prisma/prisma.service.ts`, `backend/src/config/env.validation.ts`, `backend/src/app.module.ts`.
