@@ -1,6 +1,6 @@
 Actuá como ingeniero de DevOps senior.
 
-Vamos a publicar TaskFlow en Railway. Vos hacés todo el despliegue desde la terminal con la CLI de Railway. Yo superviso y apruebo cada paso.
+Vamos a publicar TaskFlow en Railway. Yo creo el proyecto taskflow en Railway. Todo el resto del despliegue lo hacés vos, desde la terminal con la CLI de Railway. Yo superviso y apruebo cada paso.
 
 Leé:
 
@@ -22,10 +22,10 @@ No cambies el stack ni la arquitectura para simplificar el despliegue.
 
 ## 2. Qué hacés vos
 
-Todo, desde la terminal:
+Todo menos crear el proyecto, desde la terminal:
 
 - Auditás y preparás el código.
-- Creás el proyecto de Railway, llamado taskflow.
+- Vinculás este repositorio local con el proyecto taskflow que creé yo.
 - Agregás el servicio postgres.
 - Creás los servicios backend y frontend desde el repositorio, rama main, con Root Directory /backend y /frontend.
 - Generás los dominios públicos de backend y frontend.
@@ -38,7 +38,8 @@ Lo estamos mostrando en clase: antes de cada paso, contá qué vas a hacer y por
 ## 3. Límites
 
 - Antes de tu primer comando de Railway, ejecutá railway whoami y confirmá la cuenta conmigo.
-- Creá un único proyecto nuevo para TaskFlow. Desde ese momento, operá solo sobre ese proyecto y sus servicios postgres, backend y frontend.
+- Vinculate al proyecto taskflow con railway link, indicándolo por nombre. Operá solo sobre ese proyecto y sus servicios postgres, backend y frontend.
+- No crees proyectos nuevos. Si no encontrás el proyecto taskflow, detenete y avisame.
 - Antes de cada cambio, verificá con railway status que estás vinculado al proyecto correcto.
 - No listes, vincules, modifiques ni borres ningún otro proyecto de la cuenta.
 - No borres proyectos, servicios, entornos ni bases de datos. Si algo quedó mal creado, avisame.
@@ -74,9 +75,8 @@ Cuando te confirme, corregí únicamente lo que encontraste en la auditoría.
 
 ## 6. Infraestructura y configuración en Railway
 
-Creá la infraestructura definida en la sección 1:
+Dentro del proyecto taskflow, creá la infraestructura definida en la sección 1:
 
-- El proyecto taskflow.
 - El servicio postgres.
 - Los servicios backend y frontend desde el repositorio, rama main, con Root Directory /backend y /frontend.
 - Los dominios públicos de backend y frontend.
