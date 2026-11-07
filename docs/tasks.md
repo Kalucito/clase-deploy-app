@@ -260,7 +260,7 @@
 
 ## T-17 · Etiquetas: `GET /api/labels`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** alimentar el filtro de etiquetas (CA-08.3, CA-08.8).
 - **Descripción:** `LabelsModule`, `LabelsController`, `LabelsService` (solo lectura): devuelve `string[]` con el `name` de las etiquetas que tienen al menos una tarea (`tasks: { some: {} }`), ordenadas alfabéticamente (sin distinguir mayúsculas).
 - **Archivos involucrados:** `backend/src/labels/labels.module.ts`, `labels.controller.ts`, `labels.service.ts`, `backend/src/app.module.ts`, `backend/test/labels.e2e-spec.ts`.
