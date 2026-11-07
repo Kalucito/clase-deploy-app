@@ -552,7 +552,7 @@
 
 ## T-40 · Prueba E2E de humo con Playwright *(opcional según plan §10)*
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ⏭ Omitida (opcional según plan §10): requiere descargar navegadores de Playwright. Reemplazada por la checklist manual de T-41 (`docs/verificacion-final.md`) y por las pruebas manuales en Chrome de las etapas 7–10.
 - **Objetivo:** validar el flujo real de punta a punta contra backend y base reales.
 - **Descripción:** instalar Playwright en `frontend/` y cubrir: crear tarea (aparece primera) → recargar (persiste) → editar → mover con teclado entre columnas y recargar → borrar con confirmación → filtros combinados y "Limpiar filtros" → con filtros activos no se puede arrastrar. Casos de error: backend detenido → `BoardError`; movimiento con la API fallando → rollback. Documentar cómo correrlo (base de test + backend + frontend). Si se decide omitirla, dejar constancia y reemplazar por la checklist manual de T-41.
 - **Archivos involucrados:** `frontend/e2e/*.spec.ts`, `frontend/playwright.config.ts`, `frontend/package.json` (script `test:e2e`).
