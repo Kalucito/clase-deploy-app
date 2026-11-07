@@ -310,7 +310,7 @@
 
 ## T-21 · Cliente de API tipado
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** única capa de acceso al backend (plan §7.4).
 - **Descripción:** `lib/api/client.ts` (wrapper de `fetch` sobre `NEXT_PUBLIC_API_URL` + `/api`; parsea el error unificado a `ApiError { status, message, details }`; fallo de red → `ApiError` "No se pudo conectar con el servidor"; maneja `204`), `lib/api/tasks.ts` (`listTasks`, `getTask`, `createTask`, `updateTask`, `deleteTask`, `moveTask`) y `lib/api/labels.ts` (`listLabels`). Sin lógica de UI.
 - **Archivos involucrados:** `frontend/src/lib/api/client.ts`, `tasks.ts`, `labels.ts`, tests.

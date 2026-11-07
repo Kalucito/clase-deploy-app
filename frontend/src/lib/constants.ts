@@ -34,5 +34,3 @@ export const LABEL_MAX_LENGTH = 20;
 
 /** Scope compartido: las mutaciones de movimiento se ejecutan de a una y en orden. */
 export const BOARD_MOVES_SCOPE = "board-moves";
-
-export const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL ?? ""}/api`;
