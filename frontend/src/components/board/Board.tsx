@@ -1,13 +1,15 @@
 import { DndContext, DragOverlay, type Announcements } from "@dnd-kit/core";
 import { useBoardDnd, boardCollisionDetection } from "@/hooks/useBoardDnd";
 import type { MoveVariables } from "@/hooks/useMoveTask";
+import { Info } from "lucide-react";
 import { COLUMNS } from "@/lib/constants";
-import type { Task } from "@/types/task";
+import type { Task, TaskStatus } from "@/types/task";
 import { BoardColumn } from "./BoardColumn";
 import { BoardError } from "./BoardError";
 import { BoardSkeleton } from "./BoardSkeleton";
 import { DragOverlayCard } from "./DragOverlayCard";
 import { EmptyBoard } from "./EmptyBoard";
+import { NoResults } from "./NoResults";
 
 interface BoardProps {
   tasks: Task[];
@@ -20,6 +22,13 @@ interface BoardProps {
   onMoveTask?: (move: MoveVariables) => void;
   /** Deshabilita el arrastre (filtros activos, D1). */
   dndDisabled?: boolean;
+  /** Total de tareas del tablero sin filtrar: distingue "vacío" de "sin resultados". */
+  totalCount?: number;
+  /** Total real por columna, para el contador "n de total" (RN-13). */
+  columnTotals?: Partial<Record<TaskStatus, number>>;
+  /** Columnas visibles (D2); por defecto las 4. */
+  visibleStatuses?: readonly TaskStatus[];
+  onClearFilters?: () => void;
   today?: string;
 }
 
@@ -51,6 +60,10 @@ export function Board({
   onOpenTask,
   onMoveTask = noop,
   dndDisabled = false,
+  totalCount,
+  columnTotals,
+  visibleStatuses,
+  onClearFilters,
   today,
 }: BoardProps) {
   const dnd = useBoardDnd({ tasks, disabled: dndDisabled, onMove: onMoveTask });
@@ -58,7 +71,11 @@ export function Board({
   if (isLoading) return <BoardSkeleton />;
   if (isError) return <BoardError onRetry={() => onRetry?.()} />;
   // Vacío = ninguna tarea en ninguna columna (CA-01.5/01.6).
-  if (tasks.length === 0) return <EmptyBoard onCreate={onCreateFirst} />;
+  const overall = totalCount ?? tasks.length;
+  if (overall === 0) return <EmptyBoard onCreate={onCreateFirst} />;
+  // Hay tareas pero los filtros no dejan ver ninguna (CA-08.7).
+  if (tasks.length === 0)
+    return <NoResults onClear={() => onClearFilters?.()} />;
 
   const byId = new Map(tasks.map((t) => [t.id, t]));
 
@@ -72,32 +89,47 @@ export function Board({
       onDragCancel={dnd.onDragCancel}
       accessibility={{ announcements, screenReaderInstructions }}
     >
-      <div
-        data-testid="board"
-        className="flex h-full snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1 lg:snap-none lg:overflow-visible"
-      >
-        {COLUMNS.map(({ status, title }) => {
-          // Durante el arrastre se muestra el estado local; si no, el de la caché.
-          const columnTasks = dnd.columns[status]
-            .map((id) => byId.get(id))
-            .filter((t): t is Task => t !== undefined);
-          return (
-            <div
-              key={status}
-              className="h-full min-w-[85%] snap-start sm:min-w-[45%] lg:min-w-0 lg:flex-1"
-            >
-              <BoardColumn
-                status={status}
-                title={title}
-                tasks={columnTasks}
-                onOpenTask={onOpenTask}
-                today={today}
-                dndDisabled={dndDisabled}
-                isDropTarget={dnd.isDragging && dnd.activeStatus === status}
-              />
-            </div>
-          );
-        })}
+      <div className="flex h-full flex-col">
+        {dndDisabled && (
+          <p
+            role="status"
+            className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground"
+          >
+            <Info aria-hidden className="size-3.5" />
+            Limpiá los filtros para mover tareas
+          </p>
+        )}
+        <div
+          data-testid="board"
+          className="flex min-h-0 flex-1 snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-1 lg:snap-none lg:overflow-visible"
+        >
+          {COLUMNS.filter(
+            ({ status }) =>
+              !visibleStatuses || visibleStatuses.includes(status),
+          ).map(({ status, title }) => {
+            // Durante el arrastre se muestra el estado local; si no, el de la caché.
+            const columnTasks = dnd.columns[status]
+              .map((id) => byId.get(id))
+              .filter((t): t is Task => t !== undefined);
+            return (
+              <div
+                key={status}
+                className="h-full min-w-[85%] snap-start sm:min-w-[45%] lg:min-w-0 lg:flex-1"
+              >
+                <BoardColumn
+                  status={status}
+                  title={title}
+                  tasks={columnTasks}
+                  totalCount={columnTotals?.[status]}
+                  onOpenTask={onOpenTask}
+                  today={today}
+                  dndDisabled={dndDisabled}
+                  isDropTarget={dnd.isDragging && dnd.activeStatus === status}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
       <DragOverlay>
         {dnd.activeTask ? (

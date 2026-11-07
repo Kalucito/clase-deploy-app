@@ -523,7 +523,7 @@
 
 ## T-38 · Integración de filtros con el tablero (contadores, D1, "Sin resultados", CL-21)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** que los filtros afecten correctamente a todo el tablero (CA-08.5, CA-08.7, CA-08.8, RN-13, RN-14, CA-06.7, CL-21).
 - **Descripción:** aplicar `applyFilters` en `BoardPage`; ocultar columnas según el filtro de estado (D2); contadores "visibles de total" con filtros activos; `NoResults` ("Sin resultados" + "Limpiar filtros") distinto de `EmptyBoard`; con filtros activos deshabilitar el arrastre (`useSortable({ disabled: true })`) y mostrar el aviso "Limpiá los filtros para mover tareas" (tooltip/aviso), manteniendo crear/editar/eliminar; al crear una tarea que no coincide con los filtros, informar con un toast que quedó oculta por los filtros; podar etiquetas seleccionadas que ya no existen (`pruneLabels`) tras eliminar/editar.
 - **Archivos involucrados:** `frontend/src/components/board/BoardPage.tsx`, `Board.tsx`, `BoardColumn.tsx`, `TaskCard.tsx`, `NoResults.tsx`, `frontend/src/hooks/useBoardDnd.ts`, tests.
