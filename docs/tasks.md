@@ -130,7 +130,7 @@
 
 ## T-07 · Bootstrap de la aplicación y constantes de dominio
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** `main.ts` con prefijo, CORS, pipes y shutdown según plan §5.5.
 - **Descripción:** crear `common/constants.ts` (título 100, descripción 1000, máx. 10 etiquetas, etiqueta 1–20, clave del advisory lock). En `main.ts`: `setGlobalPrefix('api')`; `enableCors` con orígenes de `CORS_ORIGIN` (separados por coma), métodos `GET/POST/PATCH/DELETE`, `maxAge: 600`, sin `credentials`; `useGlobalPipes(ValidationPipe)` con `whitelist`, `forbidNonWhitelisted`, `transform` (el `exceptionFactory` llega en T-08); `enableShutdownHooks()`; `listen(PORT, '0.0.0.0')`. Extraer la configuración a una función reutilizable (`configureApp(app)`) para que los tests e2e usen la misma.
 - **Archivos involucrados:** `backend/src/main.ts`, `backend/src/common/constants.ts`, `backend/src/app.setup.ts` (nuevo, si se extrae).
