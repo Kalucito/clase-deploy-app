@@ -336,7 +336,7 @@
 
 ## T-23 · Tarjeta de tarea (`TaskCard`, `PriorityBadge`, `DueDate`)
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** mostrar una tarea según CA-01.2 y RF-09.
 - **Descripción:** `PriorityBadge` (indicador visual de baja/media/alta, no solo color), `DueDate` (formato legible en español; si está vencida: color + icono + texto "Vencida", CA-09.1), `TaskCard` (título, prioridad, vencimiento si existe, etiquetas). Contenido renderizado como texto (nunca HTML, CL-04). Título largo se trunca sin romper el layout. Tarjeta operable por teclado (rol/foco) y con etiqueta accesible; al hacer clic/Enter invoca `onOpen(task)`.
 - **Archivos involucrados:** `frontend/src/components/tasks/PriorityBadge.tsx`, `DueDate.tsx`, `frontend/src/components/board/TaskCard.tsx`, tests.
