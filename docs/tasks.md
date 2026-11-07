@@ -207,7 +207,7 @@
 
 ## T-13 · Creación: `POST /api/tasks`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** crear al **principio** de la columna (RN-04, RF-02).
 - **Descripción:** `TasksService.create` dentro de `prisma.$transaction` interactiva: tomar `pg_advisory_xact_lock`, `updateMany(status = S, position + 1)`, insertar con `position = 0`, `status` por defecto `pendiente`, `priority` por defecto `media`, `createdAt = updatedAt = now`. Etiquetas: buscar por `normalizedName` y crear las que no existan (T-10). Responder `201` con el recurso.
 - **Archivos involucrados:** `backend/src/tasks/tasks.service.ts`, `tasks.controller.ts`, `backend/test/tasks.e2e-spec.ts`.
