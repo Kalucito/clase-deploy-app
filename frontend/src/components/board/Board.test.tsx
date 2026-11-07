@@ -1,4 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { vi } from "vitest";
 import type { Task, TaskStatus } from "@/types/task";
 import { Board } from "./Board";
 import { BoardColumn } from "./BoardColumn";
@@ -20,7 +22,7 @@ function make(i: number, status: TaskStatus, position: number): Task {
 
 describe("Board", () => {
   it("muestra siempre las 4 columnas en orden (RN-01, CA-01.1)", () => {
-    render(<Board tasks={[]} />);
+    render(<Board tasks={[make(1, "hecho", 0)]} />);
     const headings = screen
       .getAllByRole("heading", { level: 2 })
       .map((h) => h.textContent);
@@ -48,6 +50,12 @@ describe("Board", () => {
       .getAllByRole("button")
       .map((b) => b.getAttribute("aria-label"));
     expect(cards).toEqual(["Tarea: Tarea 1", "Tarea: Tarea 2"]);
+  });
+
+  it("tablero sin tareas muestra el estado vacío, no las columnas (CA-01.5)", () => {
+    render(<Board tasks={[]} />);
+    expect(screen.getByText("Todavía no hay tareas")).toBeInTheDocument();
+    expect(screen.queryByTestId("board")).not.toBeInTheDocument();
   });
 
   it("una columna sin tareas muestra el placeholder; las otras no (CA-01.6)", () => {
@@ -106,5 +114,53 @@ describe("BoardColumn", () => {
     );
     expect(screen.queryByText("Sin tareas")).not.toBeInTheDocument();
     expect(screen.getByTestId("count-hecho")).toHaveTextContent("0 de 3");
+  });
+});
+
+describe("Board — estados (CA-01.3, 01.4, 01.5)", () => {
+  const some = [make(1, "pendiente", 0)];
+
+  it("cargando: muestra el esqueleto y nada más", () => {
+    render(<Board tasks={[]} isLoading />);
+    expect(
+      screen.getByRole("status", { name: "Cargando tablero" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.queryByText("Todavía no hay tareas")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("board")).not.toBeInTheDocument();
+  });
+
+  it("error: mensaje sin detalles técnicos y 'Reintentar' invoca el callback", async () => {
+    const onRetry = vi.fn();
+    render(<Board tasks={[]} isError onRetry={onRetry} />);
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "No pudimos cargar el tablero",
+    );
+    expect(screen.queryByText("Todavía no hay tareas")).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Reintentar" }));
+    expect(onRetry).toHaveBeenCalledTimes(1);
+  });
+
+  it("vacío: llamada a crear la primera tarea", async () => {
+    const onCreateFirst = vi.fn();
+    render(<Board tasks={[]} onCreateFirst={onCreateFirst} />);
+    await userEvent.click(
+      screen.getByRole("button", { name: "Crear la primera tarea" }),
+    );
+    expect(onCreateFirst).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("con tareas en alguna columna no se considera vacío (CA-01.6)", () => {
+    render(<Board tasks={some} />);
+    expect(screen.queryByText("Todavía no hay tareas")).not.toBeInTheDocument();
+    expect(screen.getByTestId("board")).toBeInTheDocument();
+  });
+
+  it("carga tiene prioridad sobre error y vacío", () => {
+    render(<Board tasks={[]} isLoading isError />);
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });

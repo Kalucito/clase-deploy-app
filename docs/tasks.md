@@ -356,7 +356,7 @@
 
 ## T-25 · Estados del tablero: carga, error y vacío
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** CA-01.3, CA-01.4, CA-01.5.
 - **Descripción:** `BoardSkeleton` (esqueleto de las 4 columnas), `BoardError` (mensaje en español sin detalles técnicos + botón "Reintentar"), `EmptyBoard` (sin ninguna tarea, con llamada a "crear la primera tarea" — el botón se conecta en T-33). `NoResults` queda para T-38. `Board` decide qué mostrar según props (`isLoading`, `isError`, `tasks`).
 - **Archivos involucrados:** `frontend/src/components/board/BoardSkeleton.tsx`, `BoardError.tsx`, `EmptyBoard.tsx`, `Board.tsx`, tests.

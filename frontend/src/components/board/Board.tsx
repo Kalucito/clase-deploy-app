@@ -2,15 +2,35 @@ import { groupByStatus } from "@/lib/board";
 import { COLUMNS } from "@/lib/constants";
 import type { Task } from "@/types/task";
 import { BoardColumn } from "./BoardColumn";
+import { BoardError } from "./BoardError";
+import { BoardSkeleton } from "./BoardSkeleton";
+import { EmptyBoard } from "./EmptyBoard";
 
 interface BoardProps {
   tasks: Task[];
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
+  onCreateFirst?: () => void;
   onOpenTask?: (task: Task) => void;
   today?: string;
 }
 
 /** Las 4 columnas fijas, siempre en el orden de RN-01. */
-export function Board({ tasks, onOpenTask, today }: BoardProps) {
+export function Board({
+  tasks,
+  isLoading = false,
+  isError = false,
+  onRetry,
+  onCreateFirst,
+  onOpenTask,
+  today,
+}: BoardProps) {
+  if (isLoading) return <BoardSkeleton />;
+  if (isError) return <BoardError onRetry={() => onRetry?.()} />;
+  // Vacío = ninguna tarea en ninguna columna (CA-01.5/01.6).
+  if (tasks.length === 0) return <EmptyBoard onCreate={onCreateFirst} />;
+
   const groups = groupByStatus(tasks);
   return (
     <div
