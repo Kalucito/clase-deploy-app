@@ -394,7 +394,7 @@
 
 ## T-28 · Verificación de la integración y de CORS
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** dejar documentado y comprobado que ambos proyectos conviven en local.
 - **Descripción:** correr base + backend (`:3001`) + frontend (`:3000`) y verificar el flujo de lectura de punta a punta; confirmar que `CORS_ORIGIN` y `NEXT_PUBLIC_API_URL` de los `.env.example` funcionan sin tocar nada más. Corregir inconsistencias de contrato encontradas (tipos del frontend vs. respuesta real).
 - **Archivos involucrados:** `backend/.env.example`, `frontend/.env.example` (si hay que ajustar valores de ejemplo), tipos en `frontend/src/types/task.ts`.
