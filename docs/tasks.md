@@ -300,7 +300,7 @@
 
 ## T-20 · Tipos, constantes y proveedores base del frontend
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** vocabulario común del frontend alineado con el contrato de API.
 - **Descripción:** `types/task.ts` (`Task`, `TaskStatus`, `Priority`, `ApiErrorBody`), `lib/constants.ts` (columnas en orden con etiquetas en español, etiquetas de prioridad, límites 100/1000/10/20, `board-moves` scope), `providers/query-provider.tsx` (`QueryClient` con `retry: 1` en lecturas y sin reintentos en mutaciones), `layout.tsx` con fuentes, `<Providers>` y `<Toaster>`, `lang="es"`. `not-found.tsx` y `error.tsx` básicos con mensajes en español.
 - **Archivos involucrados:** `frontend/src/types/task.ts`, `src/lib/constants.ts`, `src/providers/query-provider.tsx`, `src/app/layout.tsx`, `src/app/error.tsx`, `src/app/not-found.tsx`.
