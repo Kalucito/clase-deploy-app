@@ -195,7 +195,7 @@
 
 ## T-12 · Lectura: `GET /api/tasks` y `GET /api/tasks/:id`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** consultar tareas (RF-01, RF-03, RF-10).
 - **Descripción:** `TasksModule`, `TasksController` y `TasksService` con `findAll` (orden fijo de columnas pendiente → en_progreso → en_revision → hecho, luego `position`; incluye etiquetas) y `findOne` (`ParseUUIDPipe`; 404 si no existe). Serializar con el serializer. El controlador no contiene lógica de negocio.
 - **Archivos involucrados:** `backend/src/tasks/tasks.module.ts`, `tasks.controller.ts`, `tasks.service.ts`, `backend/src/app.module.ts`, `backend/test/tasks.e2e-spec.ts` (estructura base del e2e: base de test, `migrate deploy` previo, limpieza entre tests).

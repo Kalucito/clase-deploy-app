@@ -9,5 +9,8 @@
   "moduleNameMapper": {
     "^(\\.{1,2}/.*)\\.js$": "$1"
   },
-  "setupFiles": ["<rootDir>/setup-env.ts"]
+  "setupFiles": ["<rootDir>/setup-env.ts"],
+  "globalSetup": "<rootDir>/global-setup.ts",
+  "maxWorkers": 1,
+  "testTimeout": 30000
 }
