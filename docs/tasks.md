@@ -450,7 +450,7 @@
 
 ## T-32 · Validación del formulario (`lib/validation.ts`) y `TagInput`
 
-- **Estado:** ⬜ Pendiente
+- **Estado:** ✅ Terminada
 - **Objetivo:** validación cliente alineada con el backend (RN-09, CA-02.2, CA-02.3, CL-01…CL-06).
 - **Descripción:** esquema `zod` con las reglas de los DTOs (título 1–100 tras trim, descripción ≤ 1000, ≤ 10 etiquetas de 1–20 caracteres sin duplicados case-insensitive, estado/prioridad válidos, fecha válida o vacía) y mensajes en español. `TagInput`: chips con alta por Enter/coma, eliminación, límite de 10, rechazo de duplicados sin distinguir mayúsculas, contador/limitación de 20 caracteres, accesible por teclado.
 - **Archivos involucrados:** `frontend/src/lib/validation.ts`, `frontend/src/components/tasks/TagInput.tsx`, tests.
